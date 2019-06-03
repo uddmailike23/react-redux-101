@@ -5,17 +5,22 @@ import './App.css'
 
 class App extends Component {
   onFetchUser = () => {
-    console.log(this.props)
-    const { myFetchUserSuccess } = this.props
+    const { myFetchUserPending, myFetchUserSuccess } = this.props
+    myFetchUserPending()
     myFetchUserSuccess()
   }
 
   render() {
     const { user } = this.props
+
     return (
       <div className="App">
         <header className="App-header">
-          <h1>Current user: {user.currentUser.name}</h1>
+          {user.isFetching ? (
+            <h1>Loading...</h1>
+          ) : (
+            <h1>Current user: {user.currentUser.name}</h1>
+          )}
           <button onClick={this.onFetchUser}>FETCH USER</button>
         </header>
       </div>
@@ -25,7 +30,6 @@ class App extends Component {
 
 const mapStateToProps = state => {
   // return global state form redux store to local state
-  console.log('store.getState()', state)
   return {
     user: state.userReducer
   }
@@ -33,6 +37,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    myFetchUserPending: () => {
+      dispatch(Actions.fetchUserPending())
+    },
     myFetchUserSuccess: () => {
       dispatch(Actions.fetchUserSuccess({ name: 'Nonchana.S' }))
     }
